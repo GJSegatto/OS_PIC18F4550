@@ -8,6 +8,8 @@ void adc_config(void);
 int adc_read(void);
 
 void pwm_config(void);
+void activate_pwm(void);
+void stop_pwm(void);
 
 void config_interruption(void);
 

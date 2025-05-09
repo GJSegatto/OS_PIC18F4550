@@ -1,4 +1,5 @@
 #include "io.h"
+#include "kernel.h"
 #include <pic18f4550.h>
 
 int adc_read(void) {
@@ -18,23 +19,27 @@ void adc_config(void) {
 }
 
 void pwm_config(void) {
-    TRISCbits.RC0 = 0;
+    OSCCON = 0x36;
+    TRISCbits.TRISC2 = 0;
+    PR2 = 199;                  //PARA DUTY CICLE DE 50%
+    CCPR1L = 100;               //PARA DUTY CICLE DE 50%
+    T2CONbits.T2CKPS = 0b11;    //PREESCALER 1:16
+    CCP1CONbits.DC1B = 0b00;    //LSB DO PWM
+    CCP1CONbits.CCP1M = 0b1100; //LIGA PWM
+}
 
-    //LIGANDO TIMER2 POIS É NECESSÁRIO
-    PR2 = 49;                               // Ex.: Para Fosc= 4MHz, PR2=49 gera PWM de 5 kHz
+void activate_pwm() {
+    if(!T2CONbits.TMR2ON) {
+        TMR2 = 0;
+        T2CONbits.TMR2ON = 1;
+    }
+}
 
-    uint16_t dc = 100;                      // 50 % de 200 passos
-    CCPR1L            = (dc >> 2);          // = 25
-    CCP1CONbits.DC1B0 = (dc >> 0) & 1;      // = 0
-    CCP1CONbits.DC1B1 = (dc >> 1) & 1;      // = 0
-
-    TRISCbits.TRISC2 = 0;                   //RC2 COMO SAÍDA
-
-    T2CONbits.T2CKPS = 0b01;                // Prescaler 4
-    T2CONbits.TMR2ON = 1;
-
-    T2CONbits.TMR2ON = 1;                   // Liga Timer2
-    CCP1CONbits.CCP1M = 0b1100;             //ATIVANDO MODO PWM
+void stop_pwm() {
+    if(T2CONbits.TMR2ON) {
+        TMR2 = 0;
+        T2CONbits.TMR2ON = 0;
+    }
 }
 
 void config_interruption(void) {

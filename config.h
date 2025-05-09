@@ -7,7 +7,7 @@
 #define MAX_USER_TASKS      3
 #define MAX_STACK_SIZE      32
 
-#define DEFAULT_SCHEDULER   RR_SCHEDULER
+#define DEFAULT_SCHEDULER   PRIORITY_SCHEDULER
 
 #define IDLE_DEBUG          ON
 
@@ -20,7 +20,6 @@
 
 // Aplica��o exemplo
 
-// APP_1 exemplo somente das tarefas
 #define APP_1               ON
 
 // APP_2 exemplo das tarefas com sem�foro

@@ -8,43 +8,21 @@
 #include <pic18f4550.h>
 #include <stdint.h>
 
-#define PWM_MAX      ((PR2 + 1) * 4)  
-#define PWM_STEP     2                
-#define PWM_DELAY    20
-
 extern void idle(void);
 
 #if APP_1 == ON
 
 TASK tarefa_1()
 {
-    uint16_t dc    = 0;    // duty‐cycle corrente, em “passos”
-    int8_t  dir   = +1;    // +1 → subindo, −1 → descendo
-
-    while (1) {
-        // — atualiza registradores do PWM —
-        CCPR1L            = (dc >> 2) & 0xFF;   // bits D9–D2
-        CCP1CONbits.DC1B0 = (dc >> 0) & 0x01;    // bit D0
-        CCP1CONbits.DC1B1 = (dc >> 1) & 0x01;    // bit D1
-
-        // — ajusta direção do fade —
-        dc += dir * PWM_STEP;
-        if (dc >= PWM_MAX) {
-            dc  = PWM_MAX;
-            dir = -1;
-        }
-        else if (dc == 0) {
-            dir = +1;
-        }
-
-        delay(PWM_DELAY);
-    }   
+    while(1) {
+        activate_pwm();
+    }
 }
 
 TASK tarefa_2()
 {
     while (1) {
-        LATDbits.LD1 = ~PORTDbits.RD1;
+        Nop();
     }    
 }
 
