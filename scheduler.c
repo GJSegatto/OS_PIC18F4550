@@ -5,8 +5,7 @@
 
 // Refer�ncia para a fila de aptos
 extern ready_queue_t r_queue;
-uint8_t last_active_task = 0;
-
+uint8_t last_active_task = 0;       //ÚLTIMA TASK ESCOLHIDA PELO ESCALONADOR
 
 void __reentrant scheduler()
 {

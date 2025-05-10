@@ -1,8 +1,8 @@
 #include "io.h"
 #include "kernel.h"
-#include <pic18f4550.h>
+#include <stdint.h>
 
-int adc_read(void) {
+uint16_t adc_read(void) {
     ADCON0bits.GO = 1;
     while(ADCON0bits.GODONE);
     return ADRES;
@@ -20,19 +20,22 @@ void adc_config(void) {
 
 void pwm_config(void) {
     OSCCON = 0x36;
-    TRISCbits.TRISC2 = 0;
+    TRISCbits.RC2 = 0;
     PR2 = 199;                  //PARA DUTY CICLE DE 50%
     CCPR1L = 100;               //PARA DUTY CICLE DE 50%
-    T2CONbits.T2CKPS = 0b11;    //PREESCALER 1:16
+    T2CONbits.T2CKPS = 0b00;    //PREESCALER 1:16
     CCP1CONbits.DC1B = 0b00;    //LSB DO PWM
     CCP1CONbits.CCP1M = 0b1100; //LIGA PWM
 }
 
-void activate_pwm() {
+void activate_pwm(uint16_t dc) {
     if(!T2CONbits.TMR2ON) {
         TMR2 = 0;
         T2CONbits.TMR2ON = 1;
     }
+    uint16_t pwm_value = ((uint32_t)(PR2 + 1) * dc) / 50;
+    CCPR1L = (uint8_t)(pwm_value >> 2); // Os 8 bits mais significativos
+    CCP1CONbits.DC1B = pwm_value & 0x03; // Os 2 bits menos significativos
 }
 
 void stop_pwm() {

@@ -10,7 +10,6 @@
 #define RR_SCHEDULER            1
 #define PRIORITY_SCHEDULER      2
 
-
 // Tipos de dados
 
 typedef void TASK;
@@ -51,6 +50,4 @@ typedef struct ready_queue {
     tcb_t *task;
 } ready_queue_t;
 
-
 #endif	/* TYPES_H */
-

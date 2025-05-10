@@ -20,7 +20,7 @@
 
 // Aplica��o exemplo
 
-#define APP_1               ON
+#define SISTEMA_CARRO       ON
 
 // APP_2 exemplo das tarefas com sem�foro
 #define APP_2               OFF

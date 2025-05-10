@@ -10,32 +10,56 @@
 
 extern void idle(void);
 
-#if APP_1 == ON
+#if SISTEMA_CARRO == ON
 
-TASK tarefa_1()
+pipe_t pipe;
+uint16_t adc_value = 0;
+mutex_t mutex;
+
+TASK acelerador()
 {
+    uint16_t pedal;
     while(1) {
-        activate_pwm();
+        pedal = adc_read();
+        write_pipe(&pipe,pedal);
+        delay(10);     
     }
 }
 
-TASK tarefa_2()
+TASK controle_central()
 {
     while (1) {
-        Nop();
+        mutex_lock(&mutex);
+        read_pipe(&pipe, &adc_value);
+        mutex_unlock(&mutex);
+        destroy_pipe(&pipe);
     }    
 }
 
-TASK tarefa_3()
+TASK injecao_eletronica()
 {
+    uint16_t duty_cicle;
     while (1) {
-        LATDbits.LD2 = ~PORTDbits.RD2;
+        mutex_lock(&mutex);
+        duty_cicle = ((uint32_t)adc_value * 195) / 1000;
+        mutex_unlock(&mutex);
+
+        if(duty_cicle > 200) {
+            duty_cicle = 200;
+        } 
+        else if(duty_cicle < 0) {
+            duty_cicle = 0;
+        }
+        activate_pwm(duty_cicle);
    }
 }
 
 void user_config()
 {
+    adc_config();
     pwm_config();
+    create_pipe(&pipe);
+    mutex_init(&mutex);
 
     TRISDbits.RD0 = 0;
     TRISDbits.RD1 = 0;
@@ -44,7 +68,7 @@ void user_config()
     // Define as tarefas como fun��es globais para
     // evitar que o compilador as retire na fase
     // de gera��o de otimiza��o.
-    asm("global _tarefa_1, _tarefa_2, _tarefa_3");
+    asm("global _acelerador, _controle_central, _injecao_eletronica");
 }
 
 #elif APP_2 == ON
@@ -100,7 +124,7 @@ void user_config()
 
 pipe_t pipe;
 
-TASK tarefa_1()
+TASK acelerador()
 {
     while (1) {
         LATDbits.LD0 = 1;
@@ -108,9 +132,9 @@ TASK tarefa_1()
     }    
 }
 
-TASK tarefa_2()
+TASK controle_central()
 {
-    uint8_t dados[3] = {'L', 'D', 'D'};
+    uint16_t dados[3] = {'L', 'D', 'L'};
     int i = 0;
     
     while (1) {
@@ -120,9 +144,9 @@ TASK tarefa_2()
     }    
 }
 
-TASK tarefa_3()
+TASK injecao_eletronica()
 {
-    uint8_t dado_pipe = 0;
+    uint16_t dado_pipe = 0;
     while (1) {
         read_pipe(&pipe, &dado_pipe);
         if (dado_pipe == 'L') {
@@ -144,7 +168,7 @@ void user_config()
    
     create_pipe(&pipe);
 
-    asm("global _tarefa_1, _tarefa_2, _tarefa_3");
+    asm("global _acelerador, _controle_central, _injecao_eletronica");
 }
 
 #elif APP_4 == ON

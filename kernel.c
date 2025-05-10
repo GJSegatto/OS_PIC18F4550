@@ -14,7 +14,7 @@ void create_task(uint8_t id, uint8_t priority, f_ptr task)
     tcb_t new_task;
     
     new_task.task_id            = id;
-    new_task.original_priority = priority;
+    new_task.original_priority  = priority;
     new_task.task_priority      = priority;
     new_task.task_f             = task;
     

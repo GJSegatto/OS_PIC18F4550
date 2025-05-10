@@ -4,14 +4,14 @@
 
 void create_pipe(pipe_t *p)
 {
-    p->pipe_msg = (uint8_t*)SRAMalloc(sizeof(uint8_t)); // Alocação dinâmica
+    p->pipe_msg = (uint16_t*)SRAMalloc(sizeof(uint16_t)); // Alocação dinâmica
     p->pipe_pos_read    = 0;
     p->pipe_pos_write   = 0;
     sem_init(&p->pipe_sem_read, 0);
     sem_init(&p->pipe_sem_write, PIPE_SIZE);
 }
 
-void write_pipe(pipe_t *p, uint8_t data)
+void write_pipe(pipe_t *p, uint16_t data)
 {
     di();
     
@@ -23,7 +23,7 @@ void write_pipe(pipe_t *p, uint8_t data)
     ei();    
 }
 
-void read_pipe(pipe_t *p, uint8_t *data)
+void read_pipe(pipe_t *p, uint16_t *data)
 {
     di();
     
