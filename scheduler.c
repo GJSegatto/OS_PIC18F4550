@@ -33,7 +33,6 @@ void __reentrant rr_scheduler()
 
 void __reentrant priority_scheduler()
 {
-    // Ordenar a fila de aptos por prioridade
     uint8_t highest_priority = 0;
     uint8_t next_task = 0;
 

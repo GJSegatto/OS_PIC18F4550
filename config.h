@@ -23,14 +23,7 @@
 #define SISTEMA_CARRO       ON
 
 // APP_2 exemplo das tarefas com sem�foro
-#define APP_2               OFF
-
-// APP_3 exemplo das tarefas com comunica��o via pipe
-#define APP_3               OFF
-
-#define APP_4               OFF
-
-#define APP_5               OFF
+#define TESTE               OFF
 
 #endif	/* CONFIG_H */
 

@@ -1,10 +1,12 @@
 #include "pipe.h"
-#include "mem.h"
+#include "config.h"
 #include <stdint.h>
 
 void create_pipe(pipe_t *p)
 {
-    p->pipe_msg = (uint16_t*)SRAMalloc(sizeof(uint16_t)); // Alocação dinâmica
+    for(uint8_t i = 0; i < PIPE_SIZE; i++) {
+        p->pipe_msg[i] = 0;
+    }
     p->pipe_pos_read    = 0;
     p->pipe_pos_write   = 0;
     sem_init(&p->pipe_sem_read, 0);
@@ -34,13 +36,3 @@ void read_pipe(pipe_t *p, uint16_t *data)
     
     ei();
 }
-
-// Função opcional para liberar o buffer do pipe
-void destroy_pipe(pipe_t *p)
-{
-    if (p->pipe_msg) {
-        SRAMfree(p->pipe_msg);
-        p->pipe_msg = 0;
-    }
-}
-

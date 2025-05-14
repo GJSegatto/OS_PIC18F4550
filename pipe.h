@@ -4,10 +4,9 @@
 #include "sync.h"
 #include "types.h"
 #include "config.h"
-#include <stdint.h>
 
 typedef struct pipe {
-    uint16_t *pipe_msg;      //PONTEIRO
+    uint16_t pipe_msg[PIPE_SIZE];
     uint8_t pipe_pos_read;
     uint8_t pipe_pos_write;
     sem_t pipe_sem_read;
@@ -15,9 +14,10 @@ typedef struct pipe {
 } pipe_t;
 
 void create_pipe(pipe_t *p);
-void destroy_pipe(pipe_t *p);
 void write_pipe(pipe_t *p, uint16_t data);
 void read_pipe(pipe_t *p, uint16_t *data);
+
+
 
 #endif	/* PIPE_H */
 

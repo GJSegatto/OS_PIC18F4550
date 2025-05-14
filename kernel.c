@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "io.h"
 #include "scheduler.h"
 #include "user_app.h"
 #include "timer.h"
@@ -124,9 +125,12 @@ void decrease_time(void)
 
 void __interrupt(high_priority) high_int(void) {
     if(INTCONbits.INT0F) {
+        stop_pwm();
         while(PORTBbits.RB0) {
-            LATDbits.LATD0 = 1;
+            LATEbits.LATE0 = 1;
         }
+        LATEbits.LATE0 = 0;
+        pwm_config();
         LATDbits.LATD0 = 0;
         INTCONbits.INT0F = 0;
     }
@@ -134,20 +138,12 @@ void __interrupt(high_priority) high_int(void) {
     if(INTCONbits.TMR0IF) {
         di();
     
-        // Seta o flag do timer em zero
-        INTCONbits.TMR0IF   = 0;
-        // Valor inicial do timer
-        TMR0 = 0;
+        INTCONbits.TMR0IF   = 0;        // Seta o flag do timer em zero
+        TMR0 = 0;                       // Valor inicial do timer
+        decrease_time();                // Decrementa o delay das tarefas que est�o em estado de waiting
         
-        // Decrementa o delay das tarefas que est�o em estado 
-        // de waiting
-        decrease_time();
-        
-        // Salva o contexto da tarefa que est� em execu��o
         SAVE_CONTEXT(READY);
-        // Chama o escalonador para definir qual a pr�xima tarefa ser� executada
         scheduler();
-        // Restaura o contexto da tarefa que entrar� em execu��o
         RESTORE_CONTEXT();
         
         ei();
