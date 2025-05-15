@@ -4,14 +4,12 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <xc.h>
-
 #include "config.h"
 
 #define RR_SCHEDULER            1
 #define PRIORITY_SCHEDULER      2
 
 // Tipos de dados
-
 typedef void TASK;
 
 typedef void (*f_ptr)(void);

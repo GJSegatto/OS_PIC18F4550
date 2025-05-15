@@ -16,6 +16,7 @@ pipe_t *pipe;
 mutex_t mutex;
 uint16_t adc_value = 0;
 
+//LEITURA DO ADC E ENVIO DA INFO
 TASK acelerador()
 {
     uint16_t pedal;
@@ -26,6 +27,7 @@ TASK acelerador()
     }
 }
 
+//LEITURA DA INFO DO ACELERADOR E ALOCACAO NA VARIAVEL COMPARTILHADA
 TASK controle_central()
 {
     while (1) {
@@ -36,6 +38,7 @@ TASK controle_central()
     }    
 }
 
+//CONTROLE DOS BICOS COM O PWM
 TASK injecao_eletronica()
 {
     uint16_t duty_cicle;
@@ -55,6 +58,7 @@ TASK injecao_eletronica()
    }
 }
 
+//CONFIGURACOES NECESSARIAS
 void user_config()
 {
     adc_config();
