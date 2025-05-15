@@ -11,9 +11,9 @@
 
 #define IDLE_DEBUG          ON
 
-#define DYNAMIC_MEM         OFF
+#define DYNAMIC_MEM         ON
 
-#define PIPE_SIZE           3
+#define PIPE_SIZE           5
 
 #define MIN_PRIORITY        0           //MENOR PRIORIDADE = 0
 #define MAX_PRIORITY        5           //MAIOR PRIORIDADE = 5

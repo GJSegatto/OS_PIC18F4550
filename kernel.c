@@ -4,6 +4,7 @@
 #include "user_app.h"
 #include "timer.h"
 #include "config.h"
+#include "mem.h"
 #include <language_support.h>
 #include <pic18f4550.h>
 
@@ -77,11 +78,9 @@ void os_start()
     // Ordenada a fila de aptos
     #endif
     user_config();
-    
-    // Habilita as interrup��es    
+       
     ei();
-    
-    // Liga o timer
+
     start_timer0();
 }
 
@@ -96,7 +95,6 @@ void change_state(state_t new_state)
     ei();    
 }
 
-// Tarefa idle
 TASK idle()
 {
     #if IDLE_DEBUG == ON
@@ -111,6 +109,7 @@ TASK idle()
     }
 }
 
+//Diminui o tempo de tarefas em WAITING
 void decrease_time(void)
 {
     for (uint8_t i = 1; i < r_queue.ready_queue_size; i++) {
@@ -123,7 +122,9 @@ void decrease_time(void)
     }
 }
 
+//Tratador de interrupcoes do sistema
 void __interrupt(high_priority) high_int(void) {
+    //Interrupcao externa (controle de estabilidade)
     if(INTCONbits.INT0F) {
         stop_pwm();
         while(PORTBbits.RB0) {
@@ -135,6 +136,7 @@ void __interrupt(high_priority) high_int(void) {
         INTCONbits.INT0F = 0;
     }
 
+    //Interrupcao de timer
     if(INTCONbits.TMR0IF) {
         di();
     

@@ -1,6 +1,5 @@
 #include "user_app.h"
 #include "kernel.h"
-#include "mem.h"
 #include "sync.h"
 #include "pipe.h"
 #include "config.h"
@@ -42,7 +41,7 @@ TASK injecao_eletronica()
     uint16_t duty_cicle;
     while (1) {
         mutex_lock(&mutex);
-        duty_cicle = ((uint32_t)adc_value * 195) / 1000;
+        duty_cicle = (uint16_t)((uint32_t)adc_value * 195 / 1000);
         mutex_unlock(&mutex);
 
         if(duty_cicle > 200) {
@@ -61,20 +60,13 @@ void user_config()
     adc_config();
     pwm_config();
 
-    SRAMInitHeap();
-    pipe = (pipe_t *)SRAMalloc(sizeof(pipe_t));
+    create_pipe(pipe, PIPE_SIZE);
     
-    create_pipe(pipe);
     mutex_init(&mutex);
 
-    TRISDbits.RD0 = 0;
-    TRISDbits.RD1 = 0;
-    TRISDbits.RD2 = 0;
     TRISEbits.RE0 = 0;
     
-    // Define as tarefas como fun��es globais para
-    // evitar que o compilador as retire na fase
-    // de gera��o de otimiza��o.
+    // Tarefas como funcoes globais para que o compilador nao as retire na fase de otimizacao.
     asm("global _acelerador, _controle_central, _injecao_eletronica");
 }
 
