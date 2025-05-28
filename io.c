@@ -21,7 +21,7 @@ void adc_config(void) {
 
 // Configurações iniciais do PWM
 void pwm_config(void) {
-    //OSCCON = 0x36;                   // (Comentado) Configuração do clock interno
+    //OSCCON = 0x36;                  // (Comentado) Configuração do clock interno
     TRISCbits.RC2 = 0;                // Define RC2 como saída (PWM)
     PR2 = 199;                        // Período do PWM (para duty cycle de 50%)
     CCPR1L = 100;                     // Duty cycle inicial de 50%
